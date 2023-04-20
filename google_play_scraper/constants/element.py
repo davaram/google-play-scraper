@@ -40,39 +40,13 @@ class ElementSpec:
 
         return result
 
-def extract_categories(s, categories = []):
-    if s == None or len(s) == 0:
-        return categories
-
-    if (len(s) >= 4 and type(s[0]) is str):
-        categories.append({ 'name': s[0], 'id': s[2] })
-    else:
-        for sub in s:
-            extract_categories(sub, categories)
-
-    return categories
-
-def get_categories(s):
-    categories = extract_categories(nested_lookup(s, [118]))
-    if len(categories) == 0:
-        # add genre and genreId like GP does when there're no categories available
-        categories.append({
-          'name': nested_lookup(s, [79, 0, 0, 0]),
-          'id': nested_lookup(s, [79, 0, 0, 2]),
-        })
-
-    return categories
 
 class ElementSpecs:
 
     Detail = {
         "title": ElementSpec(5, [1, 2, 0, 0]),
-        "description": ElementSpec(
-            5, [1, 2], lambda s: unescape_text(nested_lookup(s, [12, 0, 0, 1]) or nested_lookup(s, [72, 0, 1]))
-        ),
-        "descriptionHTML": ElementSpec(
-            5, [1, 2], lambda s: nested_lookup(s, [12, 0, 0, 1]) or nested_lookup(s, [72, 0, 1])
-        ),
+        "description": ElementSpec(5, [1, 2, 72, 0, 1], unescape_text),
+        "descriptionHTML": ElementSpec(5, [1, 2, 72, 0, 1]),
         "summary": ElementSpec(5, [1, 2, 73, 0, 1], unescape_text),
         "installs": ElementSpec(5, [1, 2, 13, 0]),
         "minInstalls": ElementSpec(5, [1, 2, 13, 1]),
@@ -117,9 +91,6 @@ class ElementSpecs:
         # "developerInternalID": ElementSpec(5, [0, 12, 5, 0, 0]),
         "genre": ElementSpec(5, [1, 2, 79, 0, 0, 0]),
         "genreId": ElementSpec(5, [1, 2, 79, 0, 0, 2]),
-        "categories": ElementSpec(
-            5, [1, 2], get_categories, []
-        ),
         "icon": ElementSpec(5, [1, 2, 95, 0, 3, 2]),
         "headerImage": ElementSpec(5, [1, 2, 96, 0, 3, 2]),
         "screenshots": ElementSpec(
@@ -175,7 +146,6 @@ class ElementSpecs:
         "at": ElementSpec(None, [5, 0], lambda v: datetime.fromtimestamp(v)),
         "replyContent": ElementSpec(None, [7, 1]),
         "repliedAt": ElementSpec(None, [7, 2, 0], lambda v: datetime.fromtimestamp(v)),
-        "appVersion": ElementSpec(None, [10]),
     }
 
     Permission_Type = ElementSpec(None, [0])

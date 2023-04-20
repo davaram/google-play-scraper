@@ -10,7 +10,7 @@ from google_play_scraper.constants.request import Formats
 from google_play_scraper.utils.request import post
 
 
-MAX_COUNT_EACH_FETCH = 199
+MAX_COUNT_EACH_FETCH = 2000
 
 
 class _ContinuationToken:
@@ -77,6 +77,7 @@ def reviews(
         token = None
 
     url = Formats.Reviews.build(lang=lang, country=country)
+    print(url)
 
     _fetch_count = count
 
