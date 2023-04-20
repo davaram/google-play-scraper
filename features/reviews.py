@@ -77,7 +77,6 @@ def reviews(
         token = None
 
     url = Formats.Reviews.build(lang=lang, country=country)
-    print(url)
 
     _fetch_count = count
 
